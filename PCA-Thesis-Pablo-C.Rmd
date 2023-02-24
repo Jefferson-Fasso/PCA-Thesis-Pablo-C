@@ -1,0 +1,114 @@
+---
+title: "PCA Thesis Pablo Corella"
+author: "Jefferson Pastuña"
+date: "2023-02-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introducción
+
+La raíz de la planta *Urospatha saggitifolia* es usado tradicionalmente en la Amazonía ecuatoriana para el tratamiento de accidentes ofídicos. El presente documento usará el paquete R "Notame" de [Klåvus y colaboradores (2020)](https://doi.org/10.3390%2Fmetabo10040135) para un Análisis de Componentes Pricipales (ACP) metabolómico en tres etapas de desarrollo de la planta *U. saggitifolia*.
+
+## Métodos y resultados
+
+Se usaron los métodos detallados en [Klåvus, et al. (2020)](https://doi.org/10.3390%2Fmetabo10040135) con algunas variaciones que se describen a continuación.
+
+### Intalación del paquete Notame
+
+El paquete R ["Notame"](https://github.com/antonvsdata/notame) se lo puede encuentrar en el repositorio github. A continuación, se procedió con la instalación del paquete:
+
+```{r echo=TRUE, message=FALSE}
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+devtools::install_github("antonvsdata/notame")
+```
+
+En este caso en particular fue necesario la intalación adicional de [RTools](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html ) para la correcta instalaciónde del paquete Notame.
+
+### Instalación de bibliotecas
+
+El flujo de trabajo de Notame usa paquetes R adicionales para algunas funciones. Es por ello Notame ofrece varios instructivos de acuerdo al objetivo del usuario.
+
+```{r}
+# Mediante browseVignettes("notame")
+```
+
+Las bibliotecas de uso inmediato son cargadas a continuación (de ser necesario la instalación de paquetes adicionales serán requeridos y por ende la activación de su biblioteca). Previo la intalación de la biblioteca Notame se intalaron otros paquetes.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("Biobase")
+library(Biobase)
+
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("BiocGenerics")
+library(BiocGenerics)
+
+install.packages("futile.logger", repos = "https://CRAN.R-project.org/package=futile.logger")
+library(futile.logger)
+
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+devtools::install_github("tidyverse/ggplot2")
+library(ggplot2)
+
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+devtools::install_github("tidyverse/magrittr")
+library(magrittr)
+
+library(notame)
+```
+
+De igual manera antes de la instalación de la biblioteca doParallel fue necesrio instalar paquetes adicionales.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+devtools::install_github("RevolutionAnalytics/foreach")
+library(foreach)
+
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+devtools::install_github("RevolutionAnalytics/iterators")
+library(iterators)
+
+library(parallel)
+
+install.packages("doParallel", repos="http://R-Forge.R-project.org")
+library(doParallel)
+
+```
+
+### Carpeta de trabajo y respaldos
+
+La ruta usada y recomendada fue la carpeta del proyecto R.
+
+```{r}
+ppath <- "C:/Users/F4ss0/Documents/Ikiam21062022/Tesis-Pablo-Corella"
+```
+
+De igual manera, la ruta del respaldo de R Markdown usada fue la carpeta del proyecto R.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE, results='hide'}
+
+init_log(log_file = paste0(ppath, "log.txt"))
+
+```
+
+### Importación de datos
+
+
